@@ -19,6 +19,7 @@
   },
   "homepage": "https://github.com/twiztedtrades/twizted-ai#readme",
   "devDependencies": {
+    "tsx": "^4.23.1",
     "turbo": "^2.10.5"
   }
 }
