@@ -1,61 +1,45 @@
+const watchlist = [
+  {
+    ticker: "HOOD",
+    pattern: "Falling Wedge",
+    trigger: "$69.50",
+    score: 82,
+  },
+  {
+    ticker: "NVDA",
+    pattern: "Breakout Watch",
+    trigger: "$180",
+    score: 76,
+  },
+  {
+    ticker: "AMZN",
+    pattern: "Base Formation",
+    trigger: "$250",
+    score: 79,
+  },
+];
+
 export default function Watchlist() {
   return (
-    <div className="bg-zinc-900 border border-zinc-800 rounded-xl p-6">
-      <h2 className="text-xl font-bold">
-        🔥 Watchlist
-      </h2>
+    <div className="bg-zinc-900 rounded-xl p-6">
+      <h2 className="text-xl font-bold">🔥 Watchlist</h2>
 
-      <div className="mt-4 space-y-4">
+      {watchlist.map((stock) => (
+        <div
+          key={stock.ticker}
+          className="mt-4 border-b border-zinc-800 pb-4"
+        >
+          <h3 className="font-bold text-lg">{stock.ticker}</h3>
 
-        <div>
-          <p className="font-bold text-red-400">
-            HOOD
-          </p>
-          <p className="text-gray-400 text-sm">
-            Pattern: Falling Wedge
-          </p>
-          <p className="text-gray-400 text-sm">
-            Trigger: $69.50
-          </p>
+          <p>Pattern: {stock.pattern}</p>
+
+          <p>Trigger: {stock.trigger}</p>
+
           <p className="text-green-400">
-            AI Score: 82/100
+            AI Score: {stock.score}/100
           </p>
         </div>
-
-
-        <div>
-          <p className="font-bold text-red-400">
-            NVDA
-          </p>
-          <p className="text-gray-400 text-sm">
-            Pattern: Breakout Watch
-          </p>
-          <p className="text-gray-400 text-sm">
-            Support: $175
-          </p>
-          <p className="text-green-400">
-            AI Score: 76/100
-          </p>
-        </div>
-
-
-        <div>
-          <p className="font-bold text-red-400">
-            AMZN
-          </p>
-          <p className="text-gray-400 text-sm">
-            Pattern: Base Formation
-          </p>
-          <p className="text-gray-400 text-sm">
-            Key Level: $250
-          </p>
-          <p className="text-green-400">
-            AI Score: 79/100
-          </p>
-        </div>
-
-
-      </div>
+      ))}
     </div>
   );
 }
