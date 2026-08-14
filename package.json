@@ -1,6 +1,10 @@
 {
   "name": "twizted-ai",
   "version": "1.0.0",
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
   "description": "All in one trading platform",
   "main": "index.js",
   "scripts": {

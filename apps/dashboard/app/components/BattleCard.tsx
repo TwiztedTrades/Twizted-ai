@@ -1,8 +1,21 @@
 import { getMarketData } from "@twizted/market-data";
-import { analyzeTrade } from "@twizted/ai-engine";
+import {
+  analyzeTrade,
+  calculateTarget,
+} from "@twizted/ai-engine";
 
 export default function BattleCard() {
   const stock = getMarketData()[0];
+
+  const entry = stock.trigger;
+  const stop = stock.support;
+
+  // TARGET ENGINE
+  const target = calculateTarget({
+    entry,
+    stop,
+    minimumRiskReward: 2,
+  });
 
   const trade = analyzeTrade({
     ticker: stock.ticker,
@@ -10,9 +23,9 @@ export default function BattleCard() {
     momentum: stock.momentum,
     volume: stock.volume,
     risk: stock.risk,
-    entry: stock.trigger,
-    stop: stock.support,
-    target: stock.trigger + 5,
+    entry,
+    stop,
+    target: target.target,
   });
 
   return (
@@ -39,7 +52,7 @@ export default function BattleCard() {
       </p>
 
       <p>
-        Risk: {stock.risk}
+        Risk Quality: {stock.risk}
       </p>
 
       <p className="mt-4 text-green-400 font-bold">
@@ -55,19 +68,19 @@ export default function BattleCard() {
       </p>
 
       <p>
-        Entry: ${trade.entry}
+        Entry: ${entry}
       </p>
 
       <p>
-        Stop: ${trade.stop}
+        Stop: ${stop}
       </p>
 
       <p>
-        Target: ${trade.target}
+        Target: ${target.target}
       </p>
 
       <p>
-        Risk / Reward: {trade.riskReward}:1
+        Risk / Reward: {target.riskReward.toFixed(2)}:1
       </p>
 
       <p className="mt-2 text-emerald-400 font-bold">

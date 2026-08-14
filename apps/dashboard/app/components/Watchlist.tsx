@@ -1,5 +1,8 @@
 import { getMarketData } from "@twizted/market-data";
-import { analyzeTrade } from "@twizted/ai-engine";
+import {
+  analyzeTrade,
+  calculateTarget,
+} from "@twizted/ai-engine";
 
 export default function Watchlist() {
   const watchlist = getMarketData();
@@ -9,15 +12,27 @@ export default function Watchlist() {
       <h2 className="text-xl font-bold">🔥 Watchlist</h2>
 
       {watchlist.map((stock) => {
+        // ENTRY = trigger
+        // STOP = support
+        const entry = stock.trigger;
+        const stop = stock.support;
+
+        // TARGET ENGINE
+        const target = calculateTarget({
+          entry,
+          stop,
+          minimumRiskReward: 2,
+        });
+
         const trade = analyzeTrade({
           ticker: stock.ticker,
           pattern: stock.patternScore,
           momentum: stock.momentum,
           volume: stock.volume,
           risk: stock.risk,
-          entry: stock.trigger,
-          stop: stock.support,
-          target: stock.trigger + 5,
+          entry,
+          stop,
+          target: target.target,
         });
 
         return (
@@ -32,6 +47,7 @@ export default function Watchlist() {
             <p>Price: ${stock.price}</p>
             <p>Change: {stock.change}</p>
             <p>Pattern: {stock.pattern}</p>
+
             <p>Trigger: ${stock.trigger}</p>
             <p>Support: ${stock.support}</p>
 
@@ -47,16 +63,15 @@ export default function Watchlist() {
 
             <p>Stop: ${trade.stop}</p>
 
-            <p>Target: ${trade.target}</p>
+            <p>Target: ${target.target}</p>
 
             <p>
-              Risk / Reward: {trade.riskReward}:1
+              Risk / Reward: {target.riskReward.toFixed(2)}:1
             </p>
 
             <p className="text-emerald-400 font-bold">
               {trade.signal}
             </p>
-
           </div>
         );
       })}
