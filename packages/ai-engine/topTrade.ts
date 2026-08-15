@@ -1,9 +1,10 @@
 export function selectTopTrade(trades: any[]) {
   // --------------------------------
-  // ONLY APPROVED TRADES
-  // approvalGate() is the single
-  // source of truth.
+  // FINAL APPROVAL AUTHORITY
   // --------------------------------
+  // Only trades explicitly approved
+  // by approvalGate() can become
+  // the top trade.
 
   const approvedTrades = trades.filter(
     (trade) => trade.approval?.approved === true
@@ -23,9 +24,11 @@ export function selectTopTrade(trades: any[]) {
   // --------------------------------
   // RANK APPROVED TRADES
   // --------------------------------
+  // 1. Conviction
+  // 2. AI Score
+  // 3. Confidence
 
   return approvedTrades.sort((a, b) => {
-    // 1. Conviction
     if (
       b.conviction?.conviction !==
       a.conviction?.conviction
@@ -36,12 +39,10 @@ export function selectTopTrade(trades: any[]) {
       );
     }
 
-    // 2. AI Score
     if (b.score !== a.score) {
       return b.score - a.score;
     }
 
-    // 3. Confidence
     return b.confidence - a.confidence;
   })[0];
 }
