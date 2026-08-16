@@ -1,4 +1,8 @@
 import { getMarketData } from "@twizted/market-data";
+import type { MarketData } from "@twizted/market-data";
+
+import type { TradeResult } from "./types";
+import type { TopTrade } from "@twizted/ai-engine";
 
 import {
   analyzeTrade,
@@ -11,7 +15,10 @@ import {
   approvalGate,
 } from "@twizted/ai-engine";
 
-export function runScanner() {
+export function runScanner(): {
+  trades: TradeResult[];
+  topTrade: TopTrade;
+} {
   const stocks = getMarketData();
 
   const results = stocks.map((stock) => {
@@ -55,10 +62,10 @@ export function runScanner() {
     // --------------------------------
 
     const thesis = generateTradeThesis({
-      pattern: trade.pattern,
-      momentum: trade.momentum,
-      volume: trade.volume,
-      risk: trade.risk,
+      pattern: stock.patternScore,
+      momentum: stock.momentum,
+      volume: stock.volume,
+      risk: stock.risk,
     });
 
     // --------------------------------

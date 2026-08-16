@@ -1,4 +1,6 @@
-export function getMarketData() {
+import type { MarketData } from "./types";
+
+export function getMarketData(): MarketData[] {
   return [
     {
       ticker: "HOOD",
@@ -43,3 +45,5 @@ export function getMarketData() {
     },
   ];
 }
+
+export type { MarketData };

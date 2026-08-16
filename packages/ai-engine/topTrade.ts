@@ -1,4 +1,29 @@
-export function selectTopTrade(trades: any[]) {
+export interface TopTrade {
+  ticker: string;
+  message?: string;
+
+  score?: number;
+  confidence?: number;
+
+  conviction?: {
+    conviction: number;
+    grade?: string;
+    rank?: string;
+  };
+
+  riskReward?: number;
+
+  approval?: {
+    approved: boolean;
+    status?: string;
+    reasons?: string[];
+    failedChecks?: string[];
+  };
+}
+
+export function selectTopTrade(
+  trades: TopTrade[]
+): TopTrade {
   // --------------------------------
   // FINAL APPROVAL AUTHORITY
   // --------------------------------
@@ -29,20 +54,26 @@ export function selectTopTrade(trades: any[]) {
   // 3. Confidence
 
   return approvedTrades.sort((a, b) => {
-    if (
-      b.conviction?.conviction !==
-      a.conviction?.conviction
-    ) {
-      return (
-        b.conviction.conviction -
-        a.conviction.conviction
-      );
+    const convictionA =
+      a.conviction?.conviction ?? 0;
+
+    const convictionB =
+      b.conviction?.conviction ?? 0;
+
+    if (convictionB !== convictionA) {
+      return convictionB - convictionA;
     }
 
-    if (b.score !== a.score) {
-      return b.score - a.score;
+    const scoreA = a.score ?? 0;
+    const scoreB = b.score ?? 0;
+
+    if (scoreB !== scoreA) {
+      return scoreB - scoreA;
     }
 
-    return b.confidence - a.confidence;
+    return (
+      (b.confidence ?? 0) -
+      (a.confidence ?? 0)
+    );
   })[0];
 }

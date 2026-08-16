@@ -162,3 +162,5 @@ export { calculateRisk } from "./riskEngine";
 export { calculateContractSize } from "./contractSizer";
 
 export { approvalGate } from "./approvalGate";
+
+export type { TopTrade } from "./topTrade";
