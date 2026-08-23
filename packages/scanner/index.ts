@@ -15,7 +15,7 @@ import {
   approvalGate,
 } from "@twizted/ai-engine";
 
-export function runScanner(): {
+export function runScanner(tradesToday = 0): {
   trades: TradeResult[];
   topTrade: TopTrade;
 } {
@@ -95,6 +95,7 @@ export function runScanner(): {
       contracts: contractSize.contracts,
       premium: optionPremium,
       maxPositionLossPercent: 30,
+      maxAccountRiskPercent: 1,
     });
 
 // --------------------------------
@@ -125,6 +126,8 @@ const conviction = calculateConviction({
       contracts: contractSize.contracts,
       positionCost: contractSize.positionCost,
       maxAllocation: contractSize.maxAllocation,
+      tradesToday,
+      maxTradesPerDay: 3,
     });
 
 // --------------------------------
@@ -192,3 +195,4 @@ const finalSignal = approval.approved
     topTrade,
   };
 }
+export type { TradeResult } from "./types";

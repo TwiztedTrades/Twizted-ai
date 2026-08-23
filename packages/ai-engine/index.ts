@@ -146,6 +146,11 @@ export function calculatePositionRisk({
       : "RISK TOO HIGH",
   };
 }
+export {
+  approvalGate,
+  type ApprovalGateInput,
+  type ApprovalGateResult,
+} from "./approvalGate";
 
 export { makeTradeDecision } from "./decisionEngine";
 
@@ -160,7 +165,5 @@ export { calculateTarget } from "./targetEngine";
 export { calculateRisk } from "./riskEngine";
 
 export { calculateContractSize } from "./contractSizer";
-
-export { approvalGate } from "./approvalGate";
 
 export type { TopTrade } from "./topTrade";

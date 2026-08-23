@@ -10,6 +10,9 @@ export interface ApprovalGateInput {
   contracts: number;
   positionCost: number;
   maxAllocation: number;
+
+  tradesToday?: number;
+  maxTradesPerDay?: number;
 }
 
 export interface ApprovalGateResult {
@@ -17,6 +20,10 @@ export interface ApprovalGateResult {
   status: "APPROVED" | "NO TRADE";
   reasons: string[];
   failedChecks: string[];
+
+  tradesToday: number;
+  maxTradesPerDay: number;
+  dailyTradeLimitApproved: boolean;
 }
 
 export function approvalGate(
@@ -24,6 +31,26 @@ export function approvalGate(
 ): ApprovalGateResult {
   const reasons: string[] = [];
   const failedChecks: string[] = [];
+
+  const tradesToday = input.tradesToday ?? 0;
+  const maxTradesPerDay = input.maxTradesPerDay ?? 3;
+
+  // --------------------------------
+  // DAILY TRADE LIMIT
+  // --------------------------------
+
+  const dailyTradeLimitApproved =
+    tradesToday < maxTradesPerDay;
+
+  if (dailyTradeLimitApproved) {
+    reasons.push(
+      `Daily trade limit available (${tradesToday}/${maxTradesPerDay})`
+    );
+  } else {
+    failedChecks.push(
+      `Daily trade limit reached (${tradesToday}/${maxTradesPerDay})`
+    );
+  }
 
   // --------------------------------
   // AI SCORE
@@ -99,7 +126,9 @@ export function approvalGate(
 
   if (input.contracts >= 1) {
     reasons.push(
-      `${input.contracts} contract${input.contracts === 1 ? "" : "s"} available`
+      `${input.contracts} contract${
+        input.contracts === 1 ? "" : "s"
+      } available`
     );
   } else {
     failedChecks.push("No affordable contracts");
@@ -126,10 +155,16 @@ export function approvalGate(
 
   return {
     approved,
+
     status: approved
       ? "APPROVED"
       : "NO TRADE",
+
     reasons,
     failedChecks,
+
+    tradesToday,
+    maxTradesPerDay,
+    dailyTradeLimitApproved,
   };
 }

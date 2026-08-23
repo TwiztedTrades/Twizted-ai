@@ -1,4 +1,4 @@
-export default function TopTrade({ trade }: any) {
+export default function TopTrade({ trade }: { trade: import("@twizted/ai-engine").TopTrade }) {
   if (!trade) {
     return null;
   }

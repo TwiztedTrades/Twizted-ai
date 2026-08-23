@@ -1,3 +1,4 @@
+import type { ApprovalGateResult } from "@twizted/ai-engine";
 export interface TradeResult {
   ticker: string;
 
@@ -38,8 +39,10 @@ export interface TradeResult {
     premium: number;
     positionCost: number;
     maxPositionLossPercent: number;
-    maxLoss: number;
+    plannedStopLoss: number;
     accountRiskUsed: number;
+    theoreticalMaxLoss: number;
+    theoreticalMaxLossPercent: number;
     maxAccountRiskPercent: number;
     allocationApproved: boolean;
     positionApproved: boolean;
@@ -53,10 +56,5 @@ export interface TradeResult {
     rank: string;
   };
 
-  approval: {
-    approved: boolean;
-    status: "APPROVED" | "NO TRADE";
-    reasons: string[];
-    failedChecks: string[];
-  };
+   approval: ApprovalGateResult;
 }

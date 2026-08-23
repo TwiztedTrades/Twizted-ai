@@ -4,7 +4,7 @@ export function calculateRisk({
   contracts,
   premium,
   maxPositionLossPercent = 30,
-  maxAccountRiskPercent = 2,
+  maxAccountRiskPercent = 1,
 }: {
   accountSize: number;
   accountRiskPercent?: number;
@@ -13,42 +13,31 @@ export function calculateRisk({
   maxPositionLossPercent?: number;
   maxAccountRiskPercent?: number;
 }) {
-  // -----------------------------
-  // ACCOUNT RISK
-  // -----------------------------
-
   const allocation =
     accountSize * (accountRiskPercent / 100);
-
-  // -----------------------------
-  // POSITION COST
-  // Options = premium × 100 × contracts
-  // -----------------------------
 
   const positionCost =
     premium * 100 * contracts;
 
-  // -----------------------------
-  // MAX POSITION LOSS
-  // Example:
-  // $52 position × 30% = $15.60
-  // -----------------------------
-
-  const maxLoss =
-    positionCost * (maxPositionLossPercent / 100);
-
-  // -----------------------------
-  // ACCOUNT RISK USED
-  // -----------------------------
+  // Planned loss if the stop is hit.
+  const plannedStopLoss =
+    positionCost *
+    (maxPositionLossPercent / 100);
 
   const accountRiskUsed =
     accountSize > 0
-      ? (maxLoss / accountSize) * 100
+      ? (plannedStopLoss / accountSize) * 100
       : 100;
 
-  // -----------------------------
-  // CHECKS
-  // -----------------------------
+  // Theoretical maximum loss for a long option:
+  // the entire premium paid.
+  const theoreticalMaxLoss =
+    positionCost;
+
+  const theoreticalMaxLossPercent =
+    accountSize > 0
+      ? (theoreticalMaxLoss / accountSize) * 100
+      : 100;
 
   const allocationApproved =
     accountRiskPercent <= maxAccountRiskPercent;
@@ -64,10 +53,6 @@ export function calculateRisk({
     positionApproved &&
     accountRiskApproved;
 
-  // -----------------------------
-  // STATUS
-  // -----------------------------
-
   let status = "RISK APPROVED";
 
   if (!allocationApproved) {
@@ -75,12 +60,11 @@ export function calculateRisk({
   } else if (!positionApproved) {
     status = "POSITION SIZE TOO LARGE";
   } else if (!accountRiskApproved) {
-    status = "MAX ACCOUNT RISK EXCEEDED";
+    status = "PLANNED STOP RISK EXCEEDED";
   }
 
   return {
     accountSize,
-
     accountRiskPercent,
 
     allocation: Number(
@@ -88,7 +72,6 @@ export function calculateRisk({
     ),
 
     contracts,
-
     premium,
 
     positionCost: Number(
@@ -97,24 +80,28 @@ export function calculateRisk({
 
     maxPositionLossPercent,
 
-    maxLoss: Number(
-      maxLoss.toFixed(2)
+    plannedStopLoss: Number(
+      plannedStopLoss.toFixed(2)
     ),
 
     accountRiskUsed: Number(
       accountRiskUsed.toFixed(2)
     ),
 
+    theoreticalMaxLoss: Number(
+      theoreticalMaxLoss.toFixed(2)
+    ),
+
+    theoreticalMaxLossPercent: Number(
+      theoreticalMaxLossPercent.toFixed(2)
+    ),
+
     maxAccountRiskPercent,
 
     allocationApproved,
-
     positionApproved,
-
     accountRiskApproved,
-
     approved,
-
     status,
   };
 }

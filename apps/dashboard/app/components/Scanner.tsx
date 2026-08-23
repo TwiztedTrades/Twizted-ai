@@ -1,8 +1,14 @@
-export default function Scanner({ results }: any) {
-  if (!results || !results.trades) {
-    return null;
-  }
+import type { TradeResult } from "@twizted/scanner";
 
+type ScannerResults = {
+  trades: TradeResult[];
+};
+
+export default function Scanner({
+  results,
+}: {
+  results: ScannerResults;
+}) {
   const trades = results.trades;
 
   const getConvictionStyle = (rank: string) => {
@@ -25,27 +31,28 @@ export default function Scanner({ results }: any) {
   };
 
   return (
-    <div className="space-y-6">
-
+    <div className="space-y-6 md:col-span-2">
       <h2 className="text-2xl font-bold">
         🤖 AI Market Scanner
       </h2>
 
-      {trades.map((trade: any, index: number) => {
+      {trades.map((trade, index) => {
+        const conviction =
+          trade.conviction?.conviction ?? 0;
 
-        const conviction = trade.conviction?.conviction ?? 0;
-        const rank = trade.conviction?.rank ?? "WATCH";
+        const rank =
+          trade.conviction?.rank ?? "WATCH";
 
         return (
           <div
             key={trade.ticker}
             className="bg-zinc-900 border border-zinc-800 rounded-xl p-6"
           >
-
+            {/* -------------------------------- */}
             {/* HEADER */}
+            {/* -------------------------------- */}
 
             <div className="flex items-center justify-between">
-
               <h3 className="text-xl font-bold">
                 #{index + 1} {trade.ticker}
               </h3>
@@ -67,14 +74,13 @@ export default function Scanner({ results }: any) {
                   {rank}
                 </div>
               </div>
-
             </div>
 
-
+            {/* -------------------------------- */}
             {/* AI SCORE */}
+            {/* -------------------------------- */}
 
             <div className="mt-4">
-
               <p className="text-lg">
                 TWIZTED AI SCORE:{" "}
                 <span className="font-bold">
@@ -90,13 +96,16 @@ export default function Scanner({ results }: any) {
                 Confidence: {trade.confidence}%
               </p>
 
+              <p>
+                Signal: {trade.signal}
+              </p>
             </div>
 
-
+            {/* -------------------------------- */}
             {/* TRADE LEVELS */}
+            {/* -------------------------------- */}
 
             <div className="mt-4 space-y-1">
-
               <p>
                 🎯 Entry: ${trade.entry}
               </p>
@@ -112,125 +121,147 @@ export default function Scanner({ results }: any) {
               <p>
                 ⚖️ Risk/Reward: {trade.riskReward}:1
               </p>
-
             </div>
 
+            {/* -------------------------------- */}
+            {/* MARKET DATA */}
+            {/* -------------------------------- */}
 
-            {/* SIGNAL */}
-
-            <div className="mt-4 font-bold text-emerald-400">
-              {trade.signal}
-            </div>
-
-
-            {/* AI DECISION */}
-
-            <div className="mt-5">
-
-              <h4 className="font-bold">
-                🤖 AI Decision
-              </h4>
-
-              <p className="mt-2 font-bold">
-                {trade.decision?.decision}
+            <div className="mt-4">
+              <p>
+                📊 Pattern: {trade.pattern}
               </p>
 
               <p>
-                {trade.decision?.action}
+                💵 Price: ${trade.price}
               </p>
 
-              {trade.decision?.reasons?.map(
+              <p>
+                📈 Change: {trade.change}
+              </p>
+            </div>
+
+            {/* -------------------------------- */}
+            {/* AI TRADE THESIS */}
+            {/* -------------------------------- */}
+
+            <div className="mt-5">
+              <h4 className="font-bold">
+                🧠 AI Trade Thesis
+              </h4>
+
+              {trade.thesis.reasons.map(
                 (reason: string, reasonIndex: number) => (
-                  <p key={`${trade.ticker}-decision-${reasonIndex}`}>
+                  <p
+                    key={`${trade.ticker}-thesis-${reasonIndex}`}
+                  >
                     ✓ {reason}
                   </p>
                 )
               )}
 
-            </div>
-
-
-            {/* TRADE THESIS */}
-
-            <div className="mt-5">
-
-              <h4 className="font-bold">
-                🧠 AI Trade Thesis
-              </h4>
-
-              {trade.thesis?.reasons?.map(
-                (reason: string, reasonIndex: number) => (
-                  <p key={`${trade.ticker}-thesis-${reasonIndex}`}>
-                    {reason}
-                  </p>
-                )
-              )}
-
               <p className="mt-2">
-                {trade.thesis?.summary}
+                {trade.thesis.summary}
               </p>
-
             </div>
 
-
+            {/* -------------------------------- */}
             {/* RISK ENGINE */}
+            {/* -------------------------------- */}
 
             <div className="mt-5">
-
               <h4 className="font-bold">
                 ⚠️ Risk Engine
               </h4>
 
               <p>
-                {trade.riskCheck?.status}
+                {trade.riskCheck.status}
               </p>
 
               <p>
-                Risk Used: {trade.riskCheck?.riskPercent}%
+                Risk Used:{" "}
+                {trade.riskCheck.accountRiskUsed}%
               </p>
 
               <p>
-                Max Allowed: {trade.riskCheck?.maxRiskPercent}%
+                Account Risk:{" "}
+                {trade.riskCheck.accountRiskPercent}%
               </p>
 
+              <p>
+                Position Cost: $
+                {trade.riskCheck.positionCost}
+              </p>
+
+              <p>
+                Max Loss: $
+                {trade.riskCheck.plannedStopLoss}
+              </p>
             </div>
 
+            {/* -------------------------------- */}
+            {/* CONTRACT SIZE */}
+            {/* -------------------------------- */}
 
-            {/* POSITION SIZE */}
+            <div className="mt-5">
+              <h4 className="font-bold">
+                📦 Contract Size
+              </h4>
 
-            {trade.positionSize && (
-              <div className="mt-5">
+              <p>
+                Contracts:{" "}
+                {trade.contractSize.contracts}
+              </p>
 
-                <h4 className="font-bold">
-                  🤖 Position Size
-                </h4>
+              <p>
+                Position Cost: $
+                {trade.contractSize.positionCost}
+              </p>
 
-                <p>
-                  Account: $
-                  {trade.positionSize.accountSize}
-                </p>
+              <p>
+                Position Approved:{" "}
+                {trade.contractSize.positionApproved
+                  ? "YES"
+                  : "NO"}
+              </p>
+            </div>
 
-                <p>
-                  Max Risk: $
-                  {trade.positionSize.maxRisk}
-                </p>
+            {/* -------------------------------- */}
+            {/* APPROVAL GATE */}
+            {/* -------------------------------- */}
 
-                <p>
-                  Loss Per Contract: $
-                  {trade.positionSize.lossPerContract}
-                </p>
+            <div className="mt-5 border-t border-zinc-800 pt-4">
+              <h4 className="font-bold">
+                🔒 Approval Gate
+              </h4>
 
-                <p className="font-bold">
-                  Contracts: {trade.positionSize.contracts}
-                </p>
+              <p
+                className={
+                  trade.approval.approved
+                    ? "text-emerald-400 font-bold"
+                    : "text-red-400 font-bold"
+                }
+              >
+                {trade.approval.status}
+              </p>
 
-              </div>
-            )}
+              {/* Daily Trade Limit */}
+              <p className="mt-2 text-sm text-zinc-400">
+                📊 Daily Limit:{" "}
+                {trade.approval.tradesToday}/
+                {trade.approval.maxTradesPerDay}
+              </p>
 
+              <p className="text-sm">
+                Daily Limit Status:{" "}
+                {trade.approval.dailyTradeLimitApproved
+                  ? "AVAILABLE"
+                  : "LIMIT REACHED"}
+              </p>
+            </div>
           </div>
         );
       })}
-
     </div>
   );
 }
